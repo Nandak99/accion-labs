@@ -38,28 +38,29 @@ jobs:
         run: | 
           kubectl cluster-info
           kubectl config use-context kind-kind
+          kubectl create ns nginx
 
       - name: Apply Nginx StatefulSet
         run: |
-           kubectl apply -f k8-statefulset.yml
+           kubectl apply -f k8-statefulset.yml -n nginx
 
       - name: Wait for Pods to be Running
         run: |
-          kubectl get pods -o wide
+          kubectl get pods -n nginx -o wide
           echo "Waiting for Nginx pods to be in Running state..."
           sleep 10
-          kubectl wait --for=condition=Ready pod -l app=nginx --timeout=120s
+          kubectl wait --for=condition=Ready pod -l app=nginx --timeout=120s -n nginx
 
       - name: List Pods
         run: kubectl get pods -o wide
 
       - name: Access Nginx Inside Pod
         run: |
-          POD_NAME=$(kubectl get pod -l app=nginx -o jsonpath="{.items[0].metadata.name}")
+          POD_NAME=$(kubectl get pod -l app=nginx -n nginx -o jsonpath="{.items[0].metadata.name}")
           echo "Accessing Nginx pod: $POD_NAME"
-          kubectl exec $POD_NAME -- curl -s http://localhost
+          kubectl exec $POD_NAME -n nginx-- curl -s http://localhost
 
       - name: Verify StatefulSet
         run: |
-          kubectl get pods -l app=nginx
-          kubectl get pvc
+          kubectl get pods -l app=nginx -n nginx
+          kubectl get pvc -n nginx
