@@ -37,7 +37,7 @@ jobs:
       - name: Verify Cluster is Running
         run: | 
           kubectl cluster-info
-          kubectl config-context kind-kind
+          kubectl config use-context kind-kind
 
       - name: Apply Nginx StatefulSet
         run: |
