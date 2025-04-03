@@ -39,6 +39,7 @@ jobs:
           kubectl config use-context kind-kind
           kubectl create ns nginx || echo "Namespace already exists"
           kubectl get ns nginx  
+          kubectl create configmap nginx-config --from-file=default.conf -n nginx
           kind load docker-image my-nginx:latest
 
       - name: Apply Nginx StatefulSet
@@ -55,7 +56,6 @@ jobs:
           kubectl get all -A
           kubectl get statefulset -n nginx
           kubectl get pods -n nginx -o wide
-          kubectl get pvc -n nginx
 
       - name: Access Nginx Inside Pod
         run: |
