@@ -5,15 +5,6 @@ metadata:
   name: nginx
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: regcred
-  namespace: nginx
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: ${{ secrets.DOCKER }}
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: nginx-pvc
