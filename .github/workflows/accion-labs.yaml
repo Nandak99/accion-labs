@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker Image
-        run: docker build -t my-nginx:latest .
+        run: docker build -t custom-nginx:latest .
 
       - name: Security Scan
         uses: aquasecurity/trivy-action@master
@@ -38,9 +38,8 @@ jobs:
           kubectl cluster-info
           kubectl config use-context kind-kind
           kubectl create ns nginx || echo "Namespace already exists"
-          kubectl get ns nginx  
-          kubectl create configmap nginx-config --from-file=default.conf -n nginx
-          kind load docker-image my-nginx:latest
+          kubectl get ns nginx 
+          kind load docker-image custom-nginx
 
       - name: Apply Nginx StatefulSet
         run: |
