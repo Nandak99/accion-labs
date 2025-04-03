@@ -41,7 +41,11 @@ jobs:
           kubectl cluster-info
           kubectl config use-context kind-kind
           kubectl create ns nginx || echo "Namespace already exists"
-          kubectl get ns nginx
+          kubectl create secret docker-registry regcred \
+          --docker-server=https://index.docker.io/v1/ \
+          --docker-username=nandak99 \
+          --docker-password=${{ secrets.DOCKER_PASSWORD }} \
+          --namespace=nginx
 
       - name: Apply Nginx StatefulSet
         run: |
