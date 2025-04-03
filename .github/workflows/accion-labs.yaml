@@ -45,7 +45,9 @@ jobs:
 
       - name: Wait for Pods to be Running
         run: |
+          kubectl get pods -o wide
           echo "Waiting for Nginx pods to be in Running state..."
+          sleep 10
           kubectl wait --for=condition=Ready pod -l app=nginx --timeout=120s
 
       - name: List Pods
