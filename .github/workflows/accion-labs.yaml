@@ -38,6 +38,7 @@ jobs:
 
       - name: Verify Cluster and Create Namespace
         run: | 
+          kind load docker-image nandak99/accion-labs-test:nginx
           kubectl cluster-info
           kubectl config use-context kind-kind
           kubectl create ns nginx || echo "Namespace already exists"
