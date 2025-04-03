@@ -11,8 +11,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker Image
-        run: |
-          docker build -t my-nginx:latest .
+        run: docker build -t my-nginx:latest .
 
       - name: Security Scan
         uses: aquasecurity/trivy-action@master
@@ -34,11 +33,12 @@ jobs:
               hostPort: 8080
           EOF
 
-      - name: Verify Cluster is Running
+      - name: Verify Cluster and Create Namespace
         run: | 
           kubectl cluster-info
           kubectl config use-context kind-kind
-          kubectl create ns nginx
+          kubectl create ns nginx || echo "Namespace already exists"
+          kubectl get ns nginx  
 
       - name: Apply Nginx StatefulSet
         run: |
@@ -48,9 +48,16 @@ jobs:
            echo "Waiting for Nginx pods to be in Running state..."
            kubectl wait --for=condition=Ready pod -l app=nginx --timeout=120s -n nginx
            kubectl get pods -n nginx -o wide
-           POD_NAME=$(kubectl get pod -l app=nginx -n nginx -o jsonpath="{.items[0].metadata.name}")
-           echo "Accessing Nginx pod: $POD_NAME"
-           kubectl exec $POD_NAME -n nginx-- curl -s http://localhost
-           kubectl get pods -l app=nginx -n nginx
-           kubectl get pvc -n nginx
-         
+
+      - name: Debug - List All Resources
+        run: |
+          kubectl get all -A
+          kubectl get statefulset -n nginx
+          kubectl get pods -n nginx -o wide
+          kubectl get pvc -n nginx
+
+      - name: Access Nginx Inside Pod
+        run: |
+          POD_NAME=$(kubectl get pod -l app=nginx -n nginx -o jsonpath="{.items[0].metadata.name}")
+          echo "Accessing Nginx pod: $POD_NAME"
+          kubectl exec $POD_NAME -n nginx -- curl -s http://localhost
