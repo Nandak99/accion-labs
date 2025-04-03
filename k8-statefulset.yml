@@ -11,7 +11,7 @@ metadata:
   namespace: nginx
 type: kubernetes.io/dockerconfigjson
 data:
-  .dockerconfigjson: ${{ secrets.docker }}
+  .dockerconfigjson: ${{ secrets.DOCKER }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
