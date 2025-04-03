@@ -43,6 +43,20 @@ jobs:
         run: |
            kubectl apply -f k8-statefulset.yml
 
+      - name: Wait for Pods to be Running
+        run: |
+          echo "Waiting for Nginx pods to be in Running state..."
+          kubectl wait --for=condition=Ready pod -l app=nginx --timeout=120s
+
+      - name: List Pods
+        run: kubectl get pods -o wide
+
+      - name: Access Nginx Inside Pod
+        run: |
+          POD_NAME=$(kubectl get pod -l app=nginx -o jsonpath="{.items[0].metadata.name}")
+          echo "Accessing Nginx pod: $POD_NAME"
+          kubectl exec $POD_NAME -- curl -s http://localhost
+
       - name: Verify StatefulSet
         run: |
           kubectl get pods -l app=nginx
