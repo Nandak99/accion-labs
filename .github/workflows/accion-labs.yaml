@@ -11,12 +11,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker Image
-        run: docker build -t custom-nginx:latest .
+        run: docker build -t custom-nginx .
 
       - name: Security Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'my-nginx:latest'
+          image-ref: 'custom-nginx'
 
       - name: Install Kind
         uses: helm/kind-action@v1.8.0
